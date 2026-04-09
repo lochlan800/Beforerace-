@@ -1,0 +1,276 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* Tabs */
+.tab-container {
+    display: flex;
+    background: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    background: #e8e8e8;
+}
+
+.tab-button.active {
+    color: #667eea;
+    background: white;
+    border-bottom-color: #667eea;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.section h2 {
+    color: #667eea;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Checklists */
+.checklist {
+    margin-bottom: 25px;
+}
+
+.checklist h3 {
+    color: #764ba2;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.checklist h3::before {
+    content: "✓";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.checkbox-item:hover {
+    opacity: 0.8;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.checkbox-item input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.checkbox-item span {
+    flex: 1;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+
+.sub-list {
+    margin-left: 32px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    list-style-type: disc;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.sub-list li {
+    margin-bottom: 4px;
+}
+
+/* Cards */
+.card {
+    background: #f9f9f9;
+    border-left: 4px solid #667eea;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    background: #f0f0f0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.card h3 {
+    color: #764ba2;
+    margin-bottom: 10px;
+    font-size: 1.05em;
+}
+
+.card p {
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+.card ul {
+    margin-left: 20px;
+    color: #666;
+    line-height: 1.8;
+    font-size: 0.95em;
+}
+
+.card li {
+    margin-bottom: 8px;
+}
+
+.card strong {
+    color: #764ba2;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        border-radius: 0;
+    }
+
+    header {
+        padding: 20px 15px;
+    }
+
+    header h1 {
+        font-size: 1.6em;
+    }
+
+    .section {
+        padding: 15px;
+    }
+
+    .section h2 {
+        font-size: 1.2em;
+    }
+
+    .tab-button {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        max-width: 100%;
+    }
+
+    .tab-container {
+        display: none;
+    }
+
+    .tab-content {
+        display: block !important;
+    }
+
+    header {
+        background: white;
+        color: #333;
+        border-bottom: 2px solid #333;
+    }
+}
