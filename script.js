@@ -307,6 +307,8 @@ function startRaceDayMode(profile, timingSpine) {
     const introSection = document.getElementById('timeline-intro-section');
 
     startBtn.style.display = 'none';
+    stopBtn.style.display = 'block';
+    stopBtn.textContent = '⏸️ Stop Race Day Mode';
     clockSection.style.display = 'block';
     statusP.style.display = 'block';
     introSection.style.display = 'none';
@@ -367,11 +369,14 @@ function stopRaceDayMode() {
     clearInterval(window.raceDayInterval);
 
     const startBtn = document.getElementById('start-race-day-btn');
+    const stopBtn = document.getElementById('stop-race-day-btn');
     const clockSection = document.getElementById('live-clock-section');
     const statusP = document.getElementById('race-day-status');
     const introSection = document.getElementById('timeline-intro-section');
 
     startBtn.style.display = 'block';
+    startBtn.textContent = '🟢 START RACE DAY';
+    stopBtn.style.display = 'none';
     clockSection.style.display = 'none';
     statusP.style.display = 'none';
     introSection.style.display = 'block';
@@ -421,6 +426,9 @@ function setupTestModeControls() {
                 localStorage.setItem('testSpeed', '60');
             }
 
+            // Update TEST MODE badge
+            updateTestModeBadge();
+
             // Restart race day if active
             if (localStorage.getItem('raceDayActive') === 'true') {
                 const profile = new ProfileManager().getProfile();
@@ -430,7 +438,18 @@ function setupTestModeControls() {
             }
         });
     }
+
+    // Show/hide TEST MODE badge based on current setting
+    updateTestModeBadge();
 }
+
+// Update TEST MODE badge visibility
+function updateTestModeBadge() {
+    const badge = document.getElementById('test-mode-badge');
+    if (badge) {
+        const isTestMode = localStorage.getItem('testMode') === 'true';
+        badge.style.display = isTestMode ? 'block' : 'none';
+    }
 
 // Update profile summary card
 function updateProfileSummary(profile) {

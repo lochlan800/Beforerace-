@@ -316,9 +316,15 @@ header h1 {
 }
 
 .timeline-block.current {
-    border-left-color: #ffc107;
-    background: #fffbf0;
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+    border-left-color: #10b981;
+    background: #ecfdf5;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.timeline-block.next {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .timeline-header {
@@ -344,9 +350,14 @@ header h1 {
 }
 
 .timeline-block.current .timeline-time {
-    background: #ffc107;
-    color: #333;
+    background: #10b981;
+    color: white;
     animation: pulse 1.5s infinite;
+}
+
+.timeline-block.next .timeline-time {
+    background: #3b82f6;
+    color: white;
 }
 
 @keyframes pulse {
@@ -400,8 +411,12 @@ header h1 {
 }
 
 .timeline-indicator.current {
-    background: #ffc107;
+    background: #10b981;
     animation: pulse 1.5s infinite;
+}
+
+.timeline-indicator.next {
+    background: #3b82f6;
 }
 
 .timeline-indicator.completed {
