@@ -551,6 +551,7 @@ function updateTestModeBadge() {
         const isTestMode = localStorage.getItem('testMode') === 'true';
         badge.style.display = isTestMode ? 'block' : 'none';
     }
+}
 
 // Update profile summary card
 function updateProfileSummary(profile) {
