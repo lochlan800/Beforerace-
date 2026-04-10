@@ -327,21 +327,26 @@ function startRaceDayMode(profile, timingSpine) {
         top: 100px;
         left: 10px;
         right: 10px;
-        background: yellow;
-        border: 2px solid red;
-        padding: 10px;
-        font-size: 12px;
+        background: #ffeb3b;
+        border: 3px solid #ff5722;
+        padding: 15px;
+        font-size: 11px;
         z-index: 9999;
         color: black;
-        max-height: 200px;
+        max-height: 300px;
         overflow: auto;
+        font-family: monospace;
+        line-height: 1.6;
     `;
+    const nowDate = new Date();
     debugDiv.innerHTML = `
-        <strong>DEBUG INFO:</strong><br>
-        Race Start Time: ${profile.race.startTime}<br>
+        <strong style="font-size: 13px;">🔧 DEBUG:</strong><br>
+        Profile Race Start: ${profile.race.startTime}<br>
         Button Pressed At: ${new Date(raceTimer.buttonPressTime).toLocaleTimeString()}<br>
-        Current Time Now: ${new Date().toLocaleTimeString()}<br>
-        Test Mode: ${raceTimer.isTestMode}<br>
+        <strong>Raw Now:</strong> ${nowDate.toLocaleTimeString()}<br>
+        <strong>getRaceStartTime:</strong> ${raceTimer.raceStartTime.toLocaleTimeString()}<br>
+        <strong>Is Test Mode:</strong> ${raceTimer.isTestMode}<br>
+        <strong>Test Speed:</strong> ${raceTimer.testSpeed}<br>
     `;
     document.body.appendChild(debugDiv);
 
