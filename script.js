@@ -299,6 +299,7 @@ function initRaceDay(profile, timingSpine) {
 
 // Start race day tracking
 function startRaceDayMode(profile, timingSpine) {
+    console.log('startRaceDayMode called with:', { profile, timingSpine });
     const startBtn = document.getElementById('start-race-day-btn');
     const stopBtn = document.getElementById('stop-race-day-btn');
     const clockSection = document.getElementById('live-clock-section');
@@ -311,10 +312,15 @@ function startRaceDayMode(profile, timingSpine) {
     introSection.style.display = 'none';
 
     // Create race timer
+    console.log('Creating RaceTimer...');
     const raceTimer = new RaceTimer(profile, timingSpine);
+    console.log('RaceTimer created:', raceTimer);
+    console.log('Button press time:', raceTimer.buttonPressTime);
+
     const notifManager = new NotificationManager(timingSpine, raceTimer);
 
     // Update display immediately
+    console.log('Calling updateLiveClockDisplay...');
     updateLiveClockDisplay(raceTimer);
     notifManager.checkAndFire();
 
@@ -852,11 +858,21 @@ class NotificationManager {
 
 // Update live clock display
 function updateLiveClockDisplay(raceTimer) {
-    const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
+    console.log('updateLiveClockDisplay called');
     const currentTime = raceTimer.getCurrentTime();
+    console.log('Current time from raceTimer:', currentTime);
+    console.log('Formatted time:', raceTimer.formatTime(currentTime));
+
+    const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
 
     // Update clock
-    document.getElementById('live-clock-time').textContent = raceTimer.formatTime(currentTime);
+    const clockElement = document.getElementById('live-clock-time');
+    if (clockElement) {
+        clockElement.textContent = raceTimer.formatTime(currentTime);
+        console.log('Clock updated to:', clockElement.textContent);
+    } else {
+        console.error('Clock element not found!');
+    }
 
     // Update current activity
     if (current) {
