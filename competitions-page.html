@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Competitions & Race Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .competitions-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .section ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+        }
+
+        .iframe-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .iframe-container h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 2px solid #eee;
+        }
+
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .footer {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .section h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="competitions-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏃‍♂️ Track Competitions</h1>
+            <p>Plan and track your race performance with our integrated Race Day Prep system</p>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Competitions Info -->
+            <div class="section">
+                <h2>📋 Upcoming Competitions</h2>
+                <p>Check out our schedule of upcoming track events:</p>
+                <ul>
+                    <li><strong>Sprint Series</strong> - 100m, 200m events</li>
+                    <li><strong>Middle Distance</strong> - 800m, 1500m races</li>
+                    <li><strong>Short Sprint</strong> - 50m, 60m qualifiers</li>
+                    <li><strong>Championship Meet</strong> - Multi-event weekend</li>
+                </ul>
+            </div>
+
+            <!-- How It Works -->
+            <div class="section">
+                <h2>⚡ How to Use Race Prep</h2>
+                <p>Get the most out of your competitions:</p>
+                <ul>
+                    <li>Create your race profile below</li>
+                    <li>Set your event distance and start time</li>
+                    <li>Follow the personalized timeline</li>
+                    <li>Use test mode to practice beforehand</li>
+                    <li>Get real-time coaching on race day</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Embedded Race Day Prep App -->
+        <div class="iframe-container">
+            <h2>🎯 Race Day Prep App</h2>
+            <p style="color: #666; margin-bottom: 20px;">Create your race profile and get a personalized race day schedule with real-time tracking and notifications.</p>
+            <div class="iframe-wrapper">
+                <iframe
+                    src="index.html"
+                    title="Race Day Prep App">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>💡 Tip: Your race profile and settings are saved automatically. You can access them from any page.</p>
+        </div>
+    </div>
+</body>
+</html>
