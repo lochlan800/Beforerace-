@@ -961,13 +961,29 @@ function initTabs() {
 function initChecklists() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox, index) => {
-        const savedState = localStorage.getItem(`checkbox-${index}`);
+        // Generate a stable unique ID for each checkbox
+        // Use the parent's text content as a unique identifier
+        let checkboxId = checkbox.getAttribute('data-checkbox-id');
+        if (!checkboxId) {
+            // Find the associated label or span text
+            const label = checkbox.closest('label');
+            if (label) {
+                const labelText = label.textContent.trim().substring(0, 50); // First 50 chars
+                checkboxId = 'checkbox-' + labelText.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            } else {
+                checkboxId = 'checkbox-' + index;
+            }
+            checkbox.setAttribute('data-checkbox-id', checkboxId);
+        }
+
+        // Restore saved state using stable ID
+        const savedState = localStorage.getItem(checkboxId);
         if (savedState === 'true') {
             checkbox.checked = true;
         }
 
         checkbox.addEventListener('change', () => {
-            localStorage.setItem(`checkbox-${index}`, checkbox.checked);
+            localStorage.setItem(checkboxId, checkbox.checked);
         });
     });
 
