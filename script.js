@@ -1044,6 +1044,8 @@ class NotificationManager {
 
 // Update live clock display
 function updateLiveClockDisplay(raceTimer) {
+    let current, next, minutesDiff;
+
     try {
         console.log('updateLiveClockDisplay called');
 
@@ -1058,7 +1060,10 @@ function updateLiveClockDisplay(raceTimer) {
         const formattedTime = raceTimer.formatTime(currentTime);
         console.log('Formatted time:', formattedTime);
 
-        const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
+        const activity = raceTimer.getCurrentActivity();
+        current = activity.current;
+        next = activity.next;
+        minutesDiff = activity.minutesDiff;
 
         // Update clock - with error handling
         const clockElement = document.getElementById('live-clock-time');
