@@ -190,20 +190,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Form submission
     const profileForm = document.getElementById('profile-form');
+    const submitBtn = profileForm.querySelector('button[type="submit"]');
+
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // Change button text to show loading
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = '⏳ Generating...';
+        submitBtn.disabled = true;
 
         try {
             // Collect form data
             const formData = new FormData(profileForm);
+            console.log('Form submitted, collecting data...');
 
             // Validate required fields
-            const requiredFields = ['raceName', 'distance', 'date', 'startTime', 'courseType', 'courseProfile', 'warmupDuration'];
+            const requiredFields = ['raceName', 'distance', 'date', 'startTime', 'courseType', 'courseProfile', 'warmupDuration', 'travelTime'];
+            let missingFields = [];
+
             for (let field of requiredFields) {
-                if (!formData.get(field)) {
-                    alert(`Please fill in all required fields. Missing: ${field}`);
-                    return;
+                const value = formData.get(field);
+                console.log(`Checking ${field}: "${value}"`);
+                if (!value || value === '') {
+                    missingFields.push(field);
                 }
+            }
+
+            if (missingFields.length > 0) {
+                alert('Please fill in all required fields:\n' + missingFields.join('\n'));
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                return;
             }
 
             const profileData = {
@@ -213,23 +231,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     location: formData.get('raceName'),
                     date: formData.get('date'),
                     startTime: formData.get('startTime'),
-                    goalTime: formData.get('goalTime'),
+                    goalTime: formData.get('goalTime') || '',
                     courseType: formData.get('courseType'),
                     courseProfile: formData.get('courseProfile'),
-                    weatherTemp: formData.get('weatherTemp'),
-                    weatherConditions: formData.get('weatherConditions')
+                    weatherTemp: formData.get('weatherTemp') || '15',
+                    weatherConditions: formData.get('weatherConditions') || ''
                 },
                 logistics: {
-                    travelTime: formData.get('travelTime'),
-                    arrivalTime: formData.get('arrivalTime'),
-                    hardConstraints: formData.get('hardConstraints')
+                    travelTime: formData.get('travelTime') || '30',
+                    arrivalTime: formData.get('arrivalTime') || '',
+                    hardConstraints: formData.get('hardConstraints') || ''
                 },
                 athlete: {
                     warmupDuration: formData.get('warmupDuration'),
-                    caffeineTolerance: formData.get('caffeineTolerance'),
-                    taperPreference: formData.get('taperPreference'),
-                    injuryConcerns: formData.get('injuryConcerns'),
-                    notes: formData.get('notes')
+                    caffeineTolerance: formData.get('caffeineTolerance') || 'none',
+                    taperPreference: formData.get('taperPreference') || 'easy',
+                    injuryConcerns: formData.get('injuryConcerns') || 'none',
+                    notes: formData.get('notes') || ''
                 }
             };
 
@@ -238,12 +256,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generate timing spine
             const generator = new TimingSpineGenerator(profileData);
             const timingSpine = generator.generate();
+            console.log('Timing spine generated:', timingSpine);
 
             // Save to localStorage
             profileManager.saveProfile(profileData);
             profileManager.saveTimingSpine(timingSpine);
+            console.log('Profile saved to localStorage successfully');
 
-            console.log('Profile saved successfully');
+            // Verify it was saved
+            const saved = profileManager.getProfile();
+            console.log('Verification - saved profile:', saved);
+
+            if (!saved) {
+                throw new Error('Failed to save profile to localStorage');
+            }
 
             // Update UI
             setupScreen.style.display = 'none';
@@ -253,15 +279,16 @@ document.addEventListener('DOMContentLoaded', () => {
             updateProfileSummary(profileData);
             updateTabsWithTiming(profileData, timingSpine);
 
-            // DO NOT RESET THE FORM - keep user data visible
-            // profileForm.reset(); // REMOVED THIS LINE
-
             // Scroll to profile summary
-            profileSummary.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                profileSummary.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
 
         } catch (error) {
             console.error('Error saving profile:', error);
-            alert('Error saving profile: ' + error.message);
+            alert('Error: ' + error.message + '\n\nPlease try again and make sure all fields are filled in.');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
     });
 
