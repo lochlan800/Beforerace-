@@ -276,6 +276,11 @@ function updateTabsWithTiming(profile, timingSpine) {
 function populateDayBeforeTimeline(profile, timingSpine) {
     const container = document.getElementById('day-before-timeline');
 
+    if (!container) {
+        console.error('Day before timeline container not found');
+        return;
+    }
+
     // Day Before sections (showing prep activities, not times since day before is not precise)
     const dayBeforeHTML = `
         <div class="section">
@@ -436,10 +441,16 @@ function populateDayBeforeTimeline(profile, timingSpine) {
 function populateRaceDayTimeline(profile, timingSpine) {
     const container = document.getElementById('race-day-timeline');
 
+    if (!timingSpine) {
+        container.innerHTML = '<p style="padding: 20px; color: #999;">Create your profile to see your personalized race day timeline.</p>';
+        return;
+    }
+
     let html = '<div class="section">';
 
     // Create timeline blocks for each key time
     const timeOrder = ['T_180', 'T_150', 'T_120', 'T_90', 'T_60', 'T_30', 'T_15', 'T_0'];
+    let blockCount = 0;
 
     timeOrder.forEach(key => {
         if (timingSpine[key]) {
@@ -458,11 +469,35 @@ function populateRaceDayTimeline(profile, timingSpine) {
                     </div>
                 </div>
             `;
+            blockCount++;
         }
     });
 
+    // If no blocks were found, show the dynamic warmup time if it exists
+    if (blockCount === 0 && timingSpine) {
+        // Find the warmup key dynamically
+        Object.keys(timingSpine).forEach(key => {
+            if (key.startsWith('T_') && !['T_0', 'T_15', 'T_30', 'T_60', 'T_90', 'T_120', 'T_150', 'T_180'].includes(key)) {
+                const block = timingSpine[key];
+                html += `
+                    <div class="timeline-block">
+                        <div class="timeline-header">
+                            <div class="timeline-time">${block.time}</div>
+                            <div class="timeline-activity">
+                                <h3>${block.label}</h3>
+                                <p>${block.action}</p>
+                                <div class="timeline-duration">${key}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+
     // Add mental prep section
     html += `
+        </div>
         <div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-left: 4px solid #667eea; border-radius: 4px;">
             <h3 style="color: #667eea; margin-top: 0;">🧠 Mental Preparation Tools (T-30 to T-0)</h3>
             <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Choose the techniques that resonate with you:</p>
@@ -478,7 +513,6 @@ function populateRaceDayTimeline(profile, timingSpine) {
         </div>
     `;
 
-    html += '</div>';
     container.innerHTML = html;
 }
 
