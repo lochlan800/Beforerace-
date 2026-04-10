@@ -209,20 +209,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const requiredFields = ['raceName', 'distance', 'date', 'startTime', 'courseType', 'courseProfile', 'warmupDuration', 'travelTime'];
             let missingFields = [];
 
+            console.log('===== FIELD VALUE CHECK =====');
             for (let field of requiredFields) {
                 const value = formData.get(field);
-                console.log(`Checking ${field}: "${value}"`);
-                if (!value || value === '') {
+                const isEmpty = !value || value === '';
+                console.log(`${field}: "${value}" | Empty: ${isEmpty}`);
+                if (isEmpty) {
                     missingFields.push(field);
                 }
             }
+            console.log('===== END FIELD CHECK =====');
+            console.log('Missing fields:', missingFields);
 
             if (missingFields.length > 0) {
+                const fieldList = missingFields.join(', ');
+                console.error('VALIDATION FAILED - Missing fields:', fieldList);
+
+                // Show visible error
+                const errorBox = document.createElement('div');
+                errorBox.style.cssText = 'position: fixed; top: 60px; left: 10px; right: 10px; background: #dc2626; color: white; padding: 20px; border-radius: 8px; z-index: 9999; font-weight: bold; font-size: 16px;';
+                errorBox.innerHTML = '🔴 <strong>Missing Required Fields:</strong><br>' + fieldList.replace(/,/g, '<br>');
+                document.body.appendChild(errorBox);
+                setTimeout(() => { errorBox.remove(); }, 5000);
+
                 alert('Please fill in all required fields:\n' + missingFields.join('\n'));
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
                 return;
             }
+
+            console.log('Validation PASSED - all required fields present');
 
             const profileData = {
                 race: {
@@ -306,6 +322,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error saving profile:', error);
+
+            // Show big visible error message on page
+            const errorBox = document.createElement('div');
+            errorBox.style.cssText = 'position: fixed; top: 60px; left: 10px; right: 10px; background: #dc2626; color: white; padding: 20px; border-radius: 8px; z-index: 9999; font-weight: bold; font-size: 16px; word-wrap: break-word;';
+            errorBox.innerHTML = '🔴 <strong>ERROR:</strong><br>' + error.message + '<br><br>Please fill in all required fields and try again.';
+            document.body.appendChild(errorBox);
+
+            // Remove error after 5 seconds
+            setTimeout(() => { errorBox.remove(); }, 5000);
+
             alert('Error: ' + error.message + '\n\nPlease try again and make sure all fields are filled in.');
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
