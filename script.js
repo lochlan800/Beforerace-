@@ -770,16 +770,33 @@ class RaceTimer {
     }
 
     getCurrentTime() {
-        const now = Date.now();
-        const elapsedMs = now - this.buttonPressTime;
+        try {
+            const now = Date.now();
 
-        if (this.isTestMode) {
-            // In test mode, time accelerates
-            const acceleratedMs = elapsedMs * (this.testSpeed / 1);
-            return new Date(this.buttonPressTime + acceleratedMs);
-        } else {
-            // Normal mode: return current actual time
-            return new Date(now);
+            // Validate buttonPressTime
+            if (!this.buttonPressTime || isNaN(this.buttonPressTime)) {
+                console.warn('Invalid buttonPressTime, using now');
+                return new Date(now);
+            }
+
+            if (this.isTestMode) {
+                // In test mode, time accelerates
+                const elapsedMs = now - this.buttonPressTime;
+                const testSpeedMultiplier = this.testSpeed || 10;
+                const acceleratedMs = elapsedMs * testSpeedMultiplier;
+                const resultTime = this.buttonPressTime + acceleratedMs;
+
+                console.log('Test mode:', { elapsedMs, testSpeedMultiplier, acceleratedMs, resultTime });
+                return new Date(resultTime);
+            } else {
+                // Normal mode: return current actual time
+                const date = new Date(now);
+                console.log('Normal mode - returning now:', date);
+                return date;
+            }
+        } catch (error) {
+            console.error('Error in getCurrentTime:', error);
+            return new Date(); // Fallback to current time
         }
     }
 
@@ -836,11 +853,33 @@ class RaceTimer {
     }
 
     formatTime(date) {
-        const hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        const displayHours = hours % 12 || 12;
-        return `${displayHours}:${minutes} ${ampm}`;
+        try {
+            // Ensure date is a valid Date object
+            if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+                console.error('Invalid date object:', date);
+                return '--:-- --';
+            }
+
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // Validate hours and minutes are numbers
+            if (typeof hours !== 'number' || typeof minutes !== 'number' || isNaN(hours) || isNaN(minutes)) {
+                console.error('Invalid hours or minutes:', { hours, minutes });
+                return '--:-- --';
+            }
+
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const displayMinutes = String(minutes).padStart(2, '0');
+
+            const result = `${displayHours}:${displayMinutes} ${ampm}`;
+            console.log('formatTime result:', result, 'from date:', date);
+            return result;
+        } catch (error) {
+            console.error('Error in formatTime:', error);
+            return '--:-- --';
+        }
     }
 }
 
@@ -908,27 +947,42 @@ class NotificationManager {
 
 // Update live clock display
 function updateLiveClockDisplay(raceTimer) {
-    console.log('updateLiveClockDisplay called');
-    const currentTime = raceTimer.getCurrentTime();
-    console.log('Current time from raceTimer:', currentTime);
-    const formattedTime = raceTimer.formatTime(currentTime);
-    console.log('Formatted time:', formattedTime);
+    try {
+        console.log('updateLiveClockDisplay called');
 
-    const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
+        // Get current time - with fallback to real time
+        let currentTime = raceTimer.getCurrentTime();
+        if (!currentTime || isNaN(currentTime.getTime())) {
+            console.warn('Invalid time from RaceTimer, using real time');
+            currentTime = new Date();
+        }
 
-    // Update clock
-    const clockElement = document.getElementById('live-clock-time');
-    if (clockElement) {
-        clockElement.textContent = formattedTime;
-        console.log('Clock updated to:', clockElement.textContent);
-    } else {
-        console.error('Clock element not found!');
-    }
+        console.log('Current time from raceTimer:', currentTime);
+        const formattedTime = raceTimer.formatTime(currentTime);
+        console.log('Formatted time:', formattedTime);
 
-    // Update debug display
-    const debugDiv = document.getElementById('debug-display');
-    if (debugDiv) {
-        debugDiv.innerHTML += `<br>Formatted Time: <strong>${formattedTime}</strong><br>Current Activity: ${current ? current.label : 'none'}`;
+        const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
+
+        // Update clock - with error handling
+        const clockElement = document.getElementById('live-clock-time');
+        if (clockElement) {
+            clockElement.textContent = formattedTime;
+            console.log('Clock updated to:', clockElement.textContent);
+        } else {
+            console.error('Clock element not found!');
+        }
+
+        // Update debug display
+        const debugDiv = document.getElementById('debug-display');
+        if (debugDiv) {
+            debugDiv.innerHTML += `<br><strong>Formatted:</strong> ${formattedTime}<br><strong>Activity:</strong> ${current ? current.label : 'none'}`;
+        }
+    } catch (error) {
+        console.error('Error in updateLiveClockDisplay:', error);
+        const clockElement = document.getElementById('live-clock-time');
+        if (clockElement) {
+            clockElement.textContent = new Date().toLocaleTimeString();
+        }
     }
 
     // Update current activity
