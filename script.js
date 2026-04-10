@@ -254,7 +254,151 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize tab switching
     initTabs();
     initChecklists();
+    initRaceDay(profile, profileManager.getTimingSpine());
 });
+
+// Initialize Race Day functionality
+function initRaceDay(profile, timingSpine) {
+    if (!profile || !timingSpine) return;
+
+    const startBtn = document.getElementById('start-race-day-btn');
+    const stopBtn = document.getElementById('stop-race-day-btn');
+    const clockSection = document.getElementById('live-clock-section');
+    const statusP = document.getElementById('race-day-status');
+    const introSection = document.getElementById('timeline-intro-section');
+
+    // Check if race day is already in progress
+    const isRaceDayActive = localStorage.getItem('raceDayActive') === 'true';
+
+    if (isRaceDayActive) {
+        startRaceDayMode(profile, timingSpine);
+    } else {
+        startBtn.style.display = 'block';
+    }
+
+    // Start Race Day button
+    startBtn.addEventListener('click', async () => {
+        // Request notification permission
+        const notifManager = new NotificationManager(timingSpine, null);
+        await notifManager.requestPermission();
+
+        localStorage.setItem('raceDayActive', 'true');
+        startRaceDayMode(profile, timingSpine);
+    });
+
+    // Stop Race Day button
+    stopBtn.addEventListener('click', () => {
+        if (confirm('Stop Race Day mode? You can restart it anytime.')) {
+            stopRaceDayMode();
+        }
+    });
+
+    // Test mode controls
+    setupTestModeControls();
+}
+
+// Start race day tracking
+function startRaceDayMode(profile, timingSpine) {
+    const startBtn = document.getElementById('start-race-day-btn');
+    const stopBtn = document.getElementById('stop-race-day-btn');
+    const clockSection = document.getElementById('live-clock-section');
+    const statusP = document.getElementById('race-day-status');
+    const introSection = document.getElementById('timeline-intro-section');
+
+    startBtn.style.display = 'none';
+    clockSection.style.display = 'block';
+    statusP.style.display = 'block';
+    introSection.style.display = 'none';
+
+    // Create race timer
+    const raceTimer = new RaceTimer(profile, timingSpine);
+    const notifManager = new NotificationManager(timingSpine, raceTimer);
+
+    // Update display immediately
+    updateLiveClockDisplay(raceTimer);
+    notifManager.checkAndFire();
+
+    // Update every 10 seconds
+    let updateInterval = setInterval(() => {
+        updateLiveClockDisplay(raceTimer);
+        notifManager.checkAndFire();
+    }, 10000); // Update every 10 seconds
+
+    // Store interval ID for cleanup
+    window.raceDayInterval = updateInterval;
+    window.currentRaceTimer = raceTimer;
+}
+
+// Stop race day tracking
+function stopRaceDayMode() {
+    localStorage.setItem('raceDayActive', 'false');
+    clearInterval(window.raceDayInterval);
+
+    const startBtn = document.getElementById('start-race-day-btn');
+    const clockSection = document.getElementById('live-clock-section');
+    const statusP = document.getElementById('race-day-status');
+    const introSection = document.getElementById('timeline-intro-section');
+
+    startBtn.style.display = 'block';
+    clockSection.style.display = 'none';
+    statusP.style.display = 'none';
+    introSection.style.display = 'block';
+}
+
+// Test mode controls
+function setupTestModeControls() {
+    // Add test mode dropdown to profile summary if it exists
+    const profileSummary = document.getElementById('profile-summary');
+
+    if (profileSummary && !document.getElementById('test-mode-controls')) {
+        const testModeDiv = document.createElement('div');
+        testModeDiv.id = 'test-mode-controls';
+        testModeDiv.style.cssText = `
+            padding: 15px 20px;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 0.9em;
+        `;
+
+        const isTestMode = localStorage.getItem('testMode') === 'true';
+        testModeDiv.innerHTML = `
+            <label style="color: #666; font-weight: 500;">
+                🧪 Test Mode:
+                <select id="test-mode-select" style="padding: 6px 10px; margin-left: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="normal" ${!isTestMode ? 'selected' : ''}>Normal (Real Time)</option>
+                    <option value="10x" ${isTestMode && localStorage.getItem('testSpeed') === '10' ? 'selected' : ''}>10x Speed</option>
+                    <option value="60x" ${isTestMode && localStorage.getItem('testSpeed') === '60' ? 'selected' : ''}>60x Speed</option>
+                </select>
+            </label>
+        `;
+
+        profileSummary.appendChild(testModeDiv);
+
+        // Handle test mode change
+        document.getElementById('test-mode-select').addEventListener('change', (e) => {
+            const value = e.target.value;
+
+            if (value === 'normal') {
+                localStorage.setItem('testMode', 'false');
+            } else if (value === '10x') {
+                localStorage.setItem('testMode', 'true');
+                localStorage.setItem('testSpeed', '10');
+            } else if (value === '60x') {
+                localStorage.setItem('testMode', 'true');
+                localStorage.setItem('testSpeed', '60');
+            }
+
+            // Restart race day if active
+            if (localStorage.getItem('raceDayActive') === 'true') {
+                const profile = new ProfileManager().getProfile();
+                const timingSpine = new ProfileManager().getTimingSpine();
+                stopRaceDayMode();
+                startRaceDayMode(profile, timingSpine);
+            }
+        });
+    }
+}
 
 // Update profile summary card
 function updateProfileSummary(profile) {
@@ -539,6 +683,194 @@ function populateRaceDayTimeline(profile, timingSpine) {
         console.error('Error populating race day timeline:', error);
         container.innerHTML = '<p style="padding: 20px; color: red;">Error loading timeline. Please refresh.</p>';
     }
+}
+
+// ==========================================
+// PHASE 3: REAL-TIME RACE DAY TRACKING
+// ==========================================
+
+// Race Timer - manages real vs test time
+class RaceTimer {
+    constructor(profile, timingSpine) {
+        this.profile = profile;
+        this.timingSpine = timingSpine;
+        this.raceStartTime = this.parseTime(profile.race.startTime);
+        this.isTestMode = localStorage.getItem('testMode') === 'true';
+        this.testSpeed = parseInt(localStorage.getItem('testSpeed')) || 10;
+        this.raceDayStartTime = Date.now() - (this.calculateMinutesSinceStart() * 60000);
+        this.updateInterval = null;
+    }
+
+    getCurrentTime() {
+        const now = Date.now();
+        const elapsedMs = now - this.raceDayStartTime;
+
+        if (this.isTestMode) {
+            // In test mode, time accelerates
+            const acceleratedMs = elapsedMs * (this.testSpeed / 1);
+            return new Date(this.raceDayStartTime + acceleratedMs);
+        } else {
+            // Normal time
+            return now;
+        }
+    }
+
+    parseTime(timeString) {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        return date;
+    }
+
+    calculateMinutesSinceStart() {
+        const now = new Date();
+        const diffMs = now - this.raceStartTime;
+        return Math.floor(diffMs / 60000);
+    }
+
+    getCurrentActivity() {
+        const currentTime = this.getCurrentTime();
+        const raceStartMs = this.raceStartTime.getTime();
+        const currentMs = currentTime.getTime();
+        const minutesDiff = Math.floor((currentMs - raceStartMs) / 60000);
+
+        // Find current activity
+        let current = null;
+        let next = null;
+
+        const timeKeys = Object.keys(this.timingSpine).sort((a, b) => {
+            const aMin = parseInt(a.split('_')[1]);
+            const bMin = parseInt(b.split('_')[1]);
+            return aMin - bMin;
+        });
+
+        for (let i = 0; i < timeKeys.length; i++) {
+            const key = timeKeys[i];
+            const block = this.timingSpine[key];
+            const blockMinutes = block.minutes;
+
+            if (minutesDiff >= blockMinutes) {
+                current = { key, ...block };
+            } else if (!next) {
+                next = { key, ...block };
+            }
+        }
+
+        return { current, next, minutesDiff };
+    }
+
+    getProgressPercent() {
+        const { minutesDiff } = this.getCurrentActivity();
+        const totalMinutes = 180; // T-180 to T-0 is 180 minutes
+        const percent = Math.min(100, Math.max(0, ((totalMinutes - minutesDiff) / totalMinutes) * 100));
+        return Math.round(percent);
+    }
+
+    getCountdownMinutes() {
+        const { current, next, minutesDiff } = this.getCurrentActivity();
+        if (!next) return 0;
+        const countdown = next.minutes - minutesDiff;
+        return Math.max(0, countdown);
+    }
+
+    formatTime(date) {
+        const hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        return `${displayHours}:${minutes} ${ampm}`;
+    }
+}
+
+// Notification Manager
+class NotificationManager {
+    constructor(timingSpine, raceTimer) {
+        this.timingSpine = timingSpine;
+        this.raceTimer = raceTimer;
+        this.notificationTimes = [60, 30, 15, 0]; // T-60, T-30, T-15, T-0
+        this.firedNotifications = new Set();
+        this.permissionAsked = localStorage.getItem('notificationPermissionAsked') === 'true';
+    }
+
+    async requestPermission() {
+        if (!('Notification' in window)) return false;
+
+        if (Notification.permission === 'granted') return true;
+        if (Notification.permission === 'denied') return false;
+
+        try {
+            const permission = await Notification.requestPermission();
+            localStorage.setItem('notificationPermissionAsked', 'true');
+            return permission === 'granted';
+        } catch (error) {
+            console.error('Notification permission error:', error);
+            return false;
+        }
+    }
+
+    checkAndFire() {
+        if (Notification.permission !== 'granted') return;
+
+        const { minutesDiff } = this.raceTimer.getCurrentActivity();
+
+        for (const time of this.notificationTimes) {
+            const diff = Math.abs(180 - minutesDiff - time); // Minutes until this time
+
+            // Fire notification when we're within 30 seconds of the target time
+            if (diff < 0.5 && !this.firedNotifications.has(time)) {
+                this.firedNotifications.add(time);
+                this.fireNotification(time);
+            }
+        }
+    }
+
+    fireNotification(minutesUntilRace) {
+        const message = this.getNotificationMessage(minutesUntilRace);
+        new Notification('Race Day Prep', {
+            body: message,
+            icon: '🏃',
+            badge: '🏃'
+        });
+    }
+
+    getNotificationMessage(minutesUntilRace) {
+        switch(minutesUntilRace) {
+            case 60: return '⏰ Warm-up starts in 60 minutes!';
+            case 30: return '⏰ Final mental prep in 30 minutes!';
+            case 15: return '⏰ Race starts in 15 minutes!';
+            case 0: return '🎯 GO! RACE TIME! You got this!';
+            default: return 'Race time approaching!';
+        }
+    }
+}
+
+// Update live clock display
+function updateLiveClockDisplay(raceTimer) {
+    const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
+    const currentTime = raceTimer.getCurrentTime();
+
+    // Update clock
+    document.getElementById('live-clock-time').textContent = raceTimer.formatTime(currentTime);
+
+    // Update current activity
+    if (current) {
+        document.getElementById('current-activity-label').textContent = current.label;
+        document.getElementById('current-activity-desc').textContent = current.action;
+        document.getElementById('current-activity-time').textContent = `T-${current.minutes} min`;
+    }
+
+    // Update next activity
+    if (next) {
+        document.getElementById('next-activity-label').textContent = next.label;
+        const countdown = raceTimer.getCountdownMinutes();
+        const countdownText = countdown === 0 ? 'NOW' : `In ${countdown} minute${countdown !== 1 ? 's' : ''}`;
+        document.getElementById('countdown-timer').textContent = countdownText;
+    }
+
+    // Update progress
+    const progress = raceTimer.getProgressPercent();
+    document.getElementById('progress-bar').style.width = progress + '%';
+    document.getElementById('progress-text').textContent = `${progress}% complete`;
 }
 
 // Tab switching functionality

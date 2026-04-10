@@ -225,9 +225,50 @@
 
         <!-- Race Day Tab -->
         <div id="race-day" class="tab-content">
-            <div class="timeline-intro">
-                <p>Your personalized minute-by-minute race day protocol. Follow the timeline precisely.</p>
+            <!-- Start Race Day Button -->
+            <div id="start-race-day-section" style="padding: 20px; text-align: center; border-bottom: 1px solid #eee;">
+                <button id="start-race-day-btn" class="btn-start-race-day" style="display: none;">
+                    🟢 START RACE DAY
+                </button>
+                <p id="race-day-status" style="color: #666; font-size: 0.9em; margin-top: 10px; display: none;">Race day in progress...</p>
             </div>
+
+            <!-- Live Clock & Current Activity (Hidden until race day starts) -->
+            <div id="live-clock-section" style="display: none; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-bottom: 2px solid #667eea;">
+                <div style="font-size: 1.3em; margin-bottom: 15px; font-weight: 600;">
+                    🕐 <span id="live-clock-time">00:00 AM</span>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">🟢 DOING NOW:</div>
+                    <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 10px;" id="current-activity-label">Wake Up</div>
+                    <div style="font-size: 0.85em; opacity: 0.95; margin-bottom: 5px;" id="current-activity-desc">Light mobility, first drink of water</div>
+                    <div style="font-size: 0.8em; opacity: 0.8;" id="current-activity-time">T-180 min</div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-size: 0.85em; opacity: 0.9;">⏭️ NEXT UP:</div>
+                    <div style="font-size: 0.95em; margin-top: 5px;" id="next-activity-label">Next activity</div>
+                    <div style="font-size: 0.8em; opacity: 0.8; margin-top: 3px;" id="countdown-timer">In 30 minutes</div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                    <div style="font-size: 0.8em; margin-bottom: 5px; opacity: 0.9;">📊 Progress Through Day</div>
+                    <div style="background: rgba(255,255,255,0.3); height: 6px; border-radius: 3px; overflow: hidden;">
+                        <div id="progress-bar" style="background: #4ade80; height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+                    </div>
+                    <div style="font-size: 0.75em; margin-top: 5px; opacity: 0.8;" id="progress-text">0% complete</div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button id="stop-race-day-btn" style="background: rgba(255,255,255,0.3); color: white; border: 1px solid white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Stop Race Day Mode</button>
+                </div>
+            </div>
+
+            <div class="timeline-intro" id="timeline-intro-section">
+                <p>Your personalized minute-by-minute race day protocol. Click "START RACE DAY" to begin real-time tracking.</p>
+            </div>
+
             <!-- Timeline will be populated by JavaScript -->
             <div id="race-day-timeline" class="timeline-container"></div>
         </div>
