@@ -267,9 +267,13 @@ function updateProfileSummary(profile) {
 
 // Update tabs with timing spine
 function updateTabsWithTiming(profile, timingSpine) {
+    console.log('updateTabsWithTiming called with:', { profile, timingSpine });
     window.currentTimingSpine = timingSpine;
-    populateDayBeforeTimeline(profile, timingSpine);
-    populateRaceDayTimeline(profile, timingSpine);
+
+    setTimeout(() => {
+        populateDayBeforeTimeline(profile, timingSpine);
+        populateRaceDayTimeline(profile, timingSpine);
+    }, 100);
 }
 
 // Populate Day Before timeline
@@ -280,6 +284,8 @@ function populateDayBeforeTimeline(profile, timingSpine) {
         console.error('Day before timeline container not found');
         return;
     }
+
+    console.log('Populating day before timeline');
 
     // Day Before sections (showing prep activities, not times since day before is not precise)
     const dayBeforeHTML = `
@@ -441,7 +447,15 @@ function populateDayBeforeTimeline(profile, timingSpine) {
 function populateRaceDayTimeline(profile, timingSpine) {
     const container = document.getElementById('race-day-timeline');
 
+    console.log('Populating race day timeline', { container, timingSpine });
+
+    if (!container) {
+        console.error('Race day timeline container not found');
+        return;
+    }
+
     if (!timingSpine) {
+        console.log('No timing spine, showing placeholder');
         container.innerHTML = '<p style="padding: 20px; color: #999;">Create your profile to see your personalized race day timeline.</p>';
         return;
     }
