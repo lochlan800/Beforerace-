@@ -253,6 +253,138 @@ header h1 {
     border-bottom-color: #667eea;
 }
 
+/* Timeline Intro */
+.timeline-intro {
+    padding: 15px 20px;
+    background: #f0f8ff;
+    border-left: 4px solid #667eea;
+    margin-bottom: 15px;
+}
+
+.timeline-intro p {
+    margin: 0;
+    color: #555;
+    font-size: 0.95em;
+}
+
+/* Timeline Container */
+.timeline-container {
+    padding: 20px;
+}
+
+.timeline-block {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: white;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.timeline-block:hover {
+    background: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.timeline-block.completed {
+    border-left-color: #28a745;
+    background: #f8fff9;
+    opacity: 0.7;
+}
+
+.timeline-block.current {
+    border-left-color: #ffc107;
+    background: #fffbf0;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.timeline-header {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.timeline-time {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.95em;
+    min-width: 70px;
+    text-align: center;
+}
+
+.timeline-block.completed .timeline-time {
+    background: #28a745;
+}
+
+.timeline-block.current .timeline-time {
+    background: #ffc107;
+    color: #333;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.timeline-activity {
+    flex: 1;
+}
+
+.timeline-activity h3 {
+    color: #764ba2;
+    margin: 0 0 5px 0;
+    font-size: 1em;
+}
+
+.timeline-activity p {
+    color: #666;
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.timeline-action {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #555;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.timeline-duration {
+    color: #999;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.timeline-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.timeline-indicator.upcoming {
+    background: #ccc;
+}
+
+.timeline-indicator.current {
+    background: #ffc107;
+    animation: pulse 1.5s infinite;
+}
+
+.timeline-indicator.completed {
+    background: #28a745;
+}
+
 /* Tab Content */
 .tab-content {
     display: none;

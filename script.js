@@ -267,9 +267,219 @@ function updateProfileSummary(profile) {
 
 // Update tabs with timing spine
 function updateTabsWithTiming(profile, timingSpine) {
-    // This will be filled in as we build out day-before and race-day tabs
-    // For now, store the timing spine in window for tab population
     window.currentTimingSpine = timingSpine;
+    populateDayBeforeTimeline(profile, timingSpine);
+    populateRaceDayTimeline(profile, timingSpine);
+}
+
+// Populate Day Before timeline
+function populateDayBeforeTimeline(profile, timingSpine) {
+    const container = document.getElementById('day-before-timeline');
+
+    // Day Before sections (showing prep activities, not times since day before is not precise)
+    const dayBeforeHTML = `
+        <div class="section">
+            <h2>Physical Preparation</h2>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Recovery & Rest</h3>
+                        <p>Keep movement light - no hard efforts today</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Easy recovery run or rest day (no hard efforts)<br>
+                    ✓ 10-15 min easy walk to stay loose<br>
+                    ✓ Light stretching (10-15 min)
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Nutrition & Hydration</h3>
+                        <p>Carb-load strategically for tomorrow</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Eat carb-rich meal (pasta, rice, potatoes)<br>
+                    ✓ Stay hydrated - drink water throughout the day<br>
+                    ✓ Light dinner - no heavy or spicy foods<br>
+                    ✓ Avoid excessive caffeine after 2pm
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Gear Check</h3>
+                        <p>Get everything ready so race morning is smooth</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Racing spikes/shoes ready and clean<br>
+                    ✓ Racing kit laid out and ready<br>
+                    ✓ Bib number obtained<br>
+                    ✓ Check weather forecast<br>
+                    ✓ Prepare gym bag with extras
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Mental Preparation</h2>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Visualization (10-15 min)</h3>
+                        <p>Before bed, rehearse your perfect race</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ See yourself running strong and confident<br>
+                    ✓ Visualize smooth acceleration and finishing kick<br>
+                    ✓ Picture crossing the finish line with great effort<br>
+                    ✓ Feel the emotions of a successful race
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Positive Affirmations</h3>
+                        <p>Build your confidence</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    Repeat to yourself:<br>
+                    • "I am prepared and ready"<br>
+                    • "I will run my race with confidence"<br>
+                    • "My training has prepared me well"<br>
+                    • "I belong on that track"
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Sleep & Mindset</h3>
+                        <p>Prioritize rest and mental calm</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Get to bed early (10-11pm)<br>
+                    ✓ Avoid excessive screen time 1 hour before bed<br>
+                    ✓ Focus on the process, not the outcome<br>
+                    ✓ Accept that race day nerves are normal and positive
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Recovery Prep</h2>
+            <p style="color: #666; font-size: 0.95em; margin-bottom: 20px; font-style: italic;">Get ready for post-race recovery.</p>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Recovery Tools</h3>
+                        <p>Prepare equipment for after the race</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Fill ice bath or prepare ice<br>
+                    ✓ Have foam roller accessible<br>
+                    ✓ Prepare massage tools<br>
+                    ✓ Have compression gear ready<br>
+                    ✓ Prepare stretching mat
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Recovery Nutrition</h3>
+                        <p>Stock up on post-race nutrition</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Buy/prepare recovery drinks<br>
+                    ✓ Have quick carbs ready<br>
+                    ✓ Prepare protein sources<br>
+                    ✓ Stock water bottles or electrolytes
+                </div>
+            </div>
+
+            <div class="timeline-block">
+                <div class="timeline-header">
+                    <div class="timeline-activity">
+                        <h3>Recovery Space</h3>
+                        <p>Create a comfortable recovery environment</p>
+                    </div>
+                </div>
+                <div class="timeline-action">
+                    ✓ Clear stretching/mobility area<br>
+                    ✓ Have comfortable recovery clothes ready<br>
+                    ✓ Prepare relaxation space (bed/couch)<br>
+                    ✓ Set quiet environment for recovery
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = dayBeforeHTML;
+}
+
+// Populate Race Day timeline
+function populateRaceDayTimeline(profile, timingSpine) {
+    const container = document.getElementById('race-day-timeline');
+
+    let html = '<div class="section">';
+
+    // Create timeline blocks for each key time
+    const timeOrder = ['T_180', 'T_150', 'T_120', 'T_90', 'T_60', 'T_30', 'T_15', 'T_0'];
+
+    timeOrder.forEach(key => {
+        if (timingSpine[key]) {
+            const block = timingSpine[key];
+            const indicator = block.minutes === 0 ? 'current' : 'upcoming';
+
+            html += `
+                <div class="timeline-block ${indicator}">
+                    <div class="timeline-header">
+                        <div class="timeline-time">${block.time}</div>
+                        <div class="timeline-activity">
+                            <h3>${block.label}</h3>
+                            <p>${block.action}</p>
+                            <div class="timeline-duration">T-${block.minutes} min</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    // Add mental prep section
+    html += `
+        <div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-left: 4px solid #667eea; border-radius: 4px;">
+            <h3 style="color: #667eea; margin-top: 0;">🧠 Mental Preparation Tools (T-30 to T-0)</h3>
+            <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Choose the techniques that resonate with you:</p>
+
+            <div style="margin-left: 20px; color: #666; font-size: 0.95em; line-height: 1.8;">
+                <strong>🎵 Calming Music</strong> - Play instrumental music to support mental work<br>
+                <strong>🫀 Bilateral EFT Tapping</strong> - 5-10 min alternating taps with breathing<br>
+                <strong>🎯 Body Scan</strong> - Check in with body, release tension<br>
+                <strong>🌍 Grounding (5 Senses)</strong> - Anchor to present moment<br>
+                <strong>💪 Power Pose</strong> - Build confidence with body positioning<br>
+                <strong>🏁 Race Visualization</strong> - Mental rehearsal of perfect execution
+            </div>
+        </div>
+    `;
+
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 // Tab switching functionality
