@@ -270,10 +270,9 @@ function updateTabsWithTiming(profile, timingSpine) {
     console.log('updateTabsWithTiming called with:', { profile, timingSpine });
     window.currentTimingSpine = timingSpine;
 
-    setTimeout(() => {
-        populateDayBeforeTimeline(profile, timingSpine);
-        populateRaceDayTimeline(profile, timingSpine);
-    }, 100);
+    // Populate immediately
+    populateDayBeforeTimeline(profile, timingSpine);
+    populateRaceDayTimeline(profile, timingSpine);
 }
 
 // Populate Day Before timeline
@@ -440,7 +439,13 @@ function populateDayBeforeTimeline(profile, timingSpine) {
         </div>
     `;
 
-    container.innerHTML = dayBeforeHTML;
+    try {
+        container.innerHTML = dayBeforeHTML;
+        console.log('Day before timeline populated successfully');
+    } catch (error) {
+        console.error('Error populating day before timeline:', error);
+        container.innerHTML = '<p style="padding: 20px; color: red;">Error loading timeline. Please refresh.</p>';
+    }
 }
 
 // Populate Race Day timeline
@@ -527,7 +532,13 @@ function populateRaceDayTimeline(profile, timingSpine) {
         </div>
     `;
 
-    container.innerHTML = html;
+    try {
+        container.innerHTML = html;
+        console.log('Race day timeline populated successfully');
+    } catch (error) {
+        console.error('Error populating race day timeline:', error);
+        container.innerHTML = '<p style="padding: 20px; color: red;">Error loading timeline. Please refresh.</p>';
+    }
 }
 
 // Tab switching functionality
