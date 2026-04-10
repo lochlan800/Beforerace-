@@ -959,6 +959,11 @@ function initTabs() {
 
 // Checklist functionality
 function initChecklists() {
+    // Clear old index-based localStorage keys to prevent conflicts
+    for (let i = 0; i < 100; i++) {
+        localStorage.removeItem(`checkbox-${i}`);
+    }
+
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox, index) => {
         // Generate a stable unique ID for each checkbox
@@ -976,7 +981,10 @@ function initChecklists() {
             checkbox.setAttribute('data-checkbox-id', checkboxId);
         }
 
-        // Restore saved state using stable ID
+        // Start all checkboxes unchecked
+        checkbox.checked = false;
+
+        // Restore saved state using stable ID (only if explicitly saved)
         const savedState = localStorage.getItem(checkboxId);
         if (savedState === 'true') {
             checkbox.checked = true;
