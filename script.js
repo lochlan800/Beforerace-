@@ -193,53 +193,76 @@ document.addEventListener('DOMContentLoaded', () => {
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // Collect form data
-        const formData = new FormData(profileForm);
-        const profileData = {
-            race: {
-                name: formData.get('raceName'),
-                distance: formData.get('distance'),
-                location: formData.get('raceName'), // using same as name for now
-                date: formData.get('date'),
-                startTime: formData.get('startTime'),
-                goalTime: formData.get('goalTime'),
-                courseType: formData.get('courseType'),
-                courseProfile: formData.get('courseProfile'),
-                weatherTemp: formData.get('weatherTemp'),
-                weatherConditions: formData.get('weatherConditions')
-            },
-            logistics: {
-                travelTime: formData.get('travelTime'),
-                arrivalTime: formData.get('arrivalTime'),
-                hardConstraints: formData.get('hardConstraints')
-            },
-            athlete: {
-                warmupDuration: formData.get('warmupDuration'),
-                caffeineTolerance: formData.get('caffeineTolerance'),
-                taperPreference: formData.get('taperPreference'),
-                injuryConcerns: formData.get('injuryConcerns'),
-                notes: formData.get('notes')
+        try {
+            // Collect form data
+            const formData = new FormData(profileForm);
+
+            // Validate required fields
+            const requiredFields = ['raceName', 'distance', 'date', 'startTime', 'courseType', 'courseProfile', 'warmupDuration'];
+            for (let field of requiredFields) {
+                if (!formData.get(field)) {
+                    alert(`Please fill in all required fields. Missing: ${field}`);
+                    return;
+                }
             }
-        };
 
-        // Generate timing spine
-        const generator = new TimingSpineGenerator(profileData);
-        const timingSpine = generator.generate();
+            const profileData = {
+                race: {
+                    name: formData.get('raceName'),
+                    distance: formData.get('distance'),
+                    location: formData.get('raceName'),
+                    date: formData.get('date'),
+                    startTime: formData.get('startTime'),
+                    goalTime: formData.get('goalTime'),
+                    courseType: formData.get('courseType'),
+                    courseProfile: formData.get('courseProfile'),
+                    weatherTemp: formData.get('weatherTemp'),
+                    weatherConditions: formData.get('weatherConditions')
+                },
+                logistics: {
+                    travelTime: formData.get('travelTime'),
+                    arrivalTime: formData.get('arrivalTime'),
+                    hardConstraints: formData.get('hardConstraints')
+                },
+                athlete: {
+                    warmupDuration: formData.get('warmupDuration'),
+                    caffeineTolerance: formData.get('caffeineTolerance'),
+                    taperPreference: formData.get('taperPreference'),
+                    injuryConcerns: formData.get('injuryConcerns'),
+                    notes: formData.get('notes')
+                }
+            };
 
-        // Save to localStorage
-        profileManager.saveProfile(profileData);
-        profileManager.saveTimingSpine(timingSpine);
+            console.log('Profile data to save:', profileData);
 
-        // Update UI
-        setupScreen.style.display = 'none';
-        profileSummary.style.display = 'block';
-        tabContainer.style.display = 'flex';
+            // Generate timing spine
+            const generator = new TimingSpineGenerator(profileData);
+            const timingSpine = generator.generate();
 
-        updateProfileSummary(profileData);
-        updateTabsWithTiming(profileData, timingSpine);
+            // Save to localStorage
+            profileManager.saveProfile(profileData);
+            profileManager.saveTimingSpine(timingSpine);
 
-        // Scroll to profile summary
-        profileSummary.scrollIntoView({ behavior: 'smooth' });
+            console.log('Profile saved successfully');
+
+            // Update UI
+            setupScreen.style.display = 'none';
+            profileSummary.style.display = 'block';
+            tabContainer.style.display = 'flex';
+
+            updateProfileSummary(profileData);
+            updateTabsWithTiming(profileData, timingSpine);
+
+            // DO NOT RESET THE FORM - keep user data visible
+            // profileForm.reset(); // REMOVED THIS LINE
+
+            // Scroll to profile summary
+            profileSummary.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            alert('Error saving profile: ' + error.message);
+        }
     });
 
     // Edit profile button
