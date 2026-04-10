@@ -10,8 +10,203 @@
     <div class="container">
         <header>
             <h1>🏃 Race Day Prep</h1>
-            <p class="subtitle">Track Athletics - Mental & Physical</p>
+            <p class="subtitle">Professional Pre-Race Operating System</p>
         </header>
+
+        <!-- Setup Screen (Initial Profile Creation) -->
+        <div id="setup-screen" class="setup-screen">
+            <div class="setup-content">
+                <h2>Create Your Race Profile</h2>
+                <p class="setup-intro">Let's build your personalized race day schedule. Fill in the details below.</p>
+
+                <form id="profile-form">
+                    <!-- Race Basics -->
+                    <fieldset class="form-section">
+                        <legend>Race Details</legend>
+
+                        <div class="form-group">
+                            <label for="race-name">Race Name / Location</label>
+                            <input type="text" id="race-name" name="raceName" placeholder="e.g., City 5K Championships" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="race-distance">Distance</label>
+                                <select id="race-distance" name="distance" required>
+                                    <option value="">Select distance</option>
+                                    <option value="800m">800m</option>
+                                    <option value="1500m">1500m</option>
+                                    <option value="3000m">3000m</option>
+                                    <option value="5000m">5000m (5K)</option>
+                                    <option value="10000m">10000m (10K)</option>
+                                    <option value="half-marathon">Half Marathon</option>
+                                    <option value="marathon">Marathon</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="race-date">Race Date</label>
+                                <input type="date" id="race-date" name="date" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="race-start-time">Start Time (clock)</label>
+                                <input type="time" id="race-start-time" name="startTime" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="race-goal-time">Expected Finish Time</label>
+                                <input type="time" id="race-goal-time" name="goalTime" placeholder="Optional">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Course & Conditions -->
+                    <fieldset class="form-section">
+                        <legend>Course & Conditions</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="course-type">Course Type</label>
+                                <select id="course-type" name="courseType" required>
+                                    <option value="">Select course</option>
+                                    <option value="track">Track</option>
+                                    <option value="road">Road</option>
+                                    <option value="trail">Trail</option>
+                                    <option value="mixed">Mixed</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="course-profile">Profile</label>
+                                <select id="course-profile" name="courseProfile" required>
+                                    <option value="">Select profile</option>
+                                    <option value="flat">Flat</option>
+                                    <option value="rolling">Rolling Hills</option>
+                                    <option value="mountainous">Mountainous</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weather-temp">Temperature (°C)</label>
+                                <input type="number" id="weather-temp" name="weatherTemp" placeholder="e.g., 15" min="-10" max="40">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weather-conditions">Conditions</label>
+                                <select id="weather-conditions" name="weatherConditions">
+                                    <option value="">Select</option>
+                                    <option value="sunny">Sunny</option>
+                                    <option value="cloudy">Cloudy</option>
+                                    <option value="rain">Rain</option>
+                                    <option value="windy">Windy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Logistics -->
+                    <fieldset class="form-section">
+                        <legend>Logistics & Constraints</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="travel-time">Travel Time to Venue (minutes)</label>
+                                <input type="number" id="travel-time" name="travelTime" placeholder="e.g., 30" min="0" max="180" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="arrival-time">Must Arrive By (clock)</label>
+                                <input type="time" id="arrival-time" name="arrivalTime" placeholder="Optional">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hard-constraints">Hard Constraints</label>
+                            <textarea id="hard-constraints" name="hardConstraints" placeholder="e.g., 'Bus leaves at 6:15am', 'Call room closes at 7:50am'" rows="2"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <!-- Athlete Profile -->
+                    <fieldset class="form-section">
+                        <legend>Your Preferences</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="warmup-duration">Warm-up Duration</label>
+                                <select id="warmup-duration" name="warmupDuration" required>
+                                    <option value="">Select</option>
+                                    <option value="short">Short (20-30 min)</option>
+                                    <option value="medium">Medium (45-60 min)</option>
+                                    <option value="long">Long (60-90 min)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="caffeine">Caffeine Tolerance</label>
+                                <select id="caffeine" name="caffeineTolerance" required>
+                                    <option value="">Select</option>
+                                    <option value="none">None</option>
+                                    <option value="1cup">1 cup coffee</option>
+                                    <option value="2plus">2+ cups</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="taper">Taper Style</label>
+                                <select id="taper" name="taperPreference" required>
+                                    <option value="">Select</option>
+                                    <option value="rest">Complete rest</option>
+                                    <option value="easy">Easy run</option>
+                                    <option value="mobility">Light mobility only</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="injuries">Injury Concerns</label>
+                                <select id="injuries" name="injuryConcerns">
+                                    <option value="">None</option>
+                                    <option value="ankle">Ankle</option>
+                                    <option value="knee">Knee</option>
+                                    <option value="hamstring">Hamstring</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Notes (Coach tips, quirks, etc.)</label>
+                            <textarea id="notes" name="notes" placeholder="e.g., 'Prefer dark quiet space for visualization', 'Need bathroom access before warm-up'" rows="2"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="btn-primary">Generate My Schedule</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Profile Summary (Shows after setup) -->
+        <div id="profile-summary" class="profile-summary" style="display: none;">
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="profile-header">
+                        <h3 id="summary-race-name">Race Name</h3>
+                        <p id="summary-race-details">Distance • Date • Time</p>
+                    </div>
+                    <button id="edit-profile-btn" class="btn-edit">Edit Profile</button>
+                </div>
+                <div class="profile-status">
+                    <p class="status-text">✅ Schedule Generated</p>
+                </div>
+            </div>
+        </div>
 
         <div class="tab-container">
             <button class="tab-button active" data-tab="day-before">Day Before</button>

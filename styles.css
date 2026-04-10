@@ -38,6 +38,191 @@ header h1 {
     opacity: 0.9;
 }
 
+/* Setup Screen */
+.setup-screen {
+    padding: 30px 20px;
+    background: white;
+}
+
+.setup-content {
+    max-width: 500px;
+}
+
+.setup-content h2 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.6em;
+}
+
+.setup-intro {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.95em;
+}
+
+/* Form Styles */
+#profile-form {
+    margin-bottom: 20px;
+}
+
+.form-section {
+    border: none;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section legend {
+    color: #764ba2;
+    font-weight: 600;
+    font-size: 1.05em;
+    padding-bottom: 15px;
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: #f9f9ff;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+    padding-right: 32px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Profile Summary Card */
+.profile-summary {
+    padding: 15px 20px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-card {
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-header h3 {
+    color: #667eea;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+}
+
+.profile-header p {
+    color: #888;
+    font-size: 0.85em;
+}
+
+.profile-status {
+    text-align: right;
+}
+
+.status-text {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.btn-edit {
+    background: #f0f0f0;
+    color: #667eea;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-edit:hover {
+    background: #e8e8e8;
+    border-color: #667eea;
+}
+
 /* Tabs */
 .tab-container {
     display: flex;
@@ -232,6 +417,38 @@ header h1 {
 
     header h1 {
         font-size: 1.6em;
+    }
+
+    .setup-content {
+        padding: 0;
+    }
+
+    .setup-content h2 {
+        font-size: 1.3em;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .form-section {
+        padding: 15px 0;
+    }
+
+    .btn-primary {
+        padding: 12px 20px;
+        font-size: 0.95em;
+    }
+
+    .profile-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-status {
+        text-align: left;
+        margin-top: 10px;
     }
 
     .section {
