@@ -630,6 +630,12 @@ function populateRaceDayTimeline(profile, timingSpine) {
                             <div class="timeline-duration">T-${block.minutes} min</div>
                         </div>
                     </div>
+                    <div class="timeline-action">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="race-day-activity-checkbox">
+                            <span>Mark as done</span>
+                        </label>
+                    </div>
                 </div>
             `;
             blockCount++;
@@ -651,6 +657,12 @@ function populateRaceDayTimeline(profile, timingSpine) {
                                 <p>${block.action}</p>
                                 <div class="timeline-duration">${key}</div>
                             </div>
+                        </div>
+                        <div class="timeline-action">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="race-day-activity-checkbox">
+                                <span>Mark as done</span>
+                            </label>
                         </div>
                     </div>
                 `;
@@ -697,21 +709,21 @@ class RaceTimer {
         this.raceStartTime = this.parseTime(profile.race.startTime);
         this.isTestMode = localStorage.getItem('testMode') === 'true';
         this.testSpeed = parseInt(localStorage.getItem('testSpeed')) || 10;
-        this.raceDayStartTime = Date.now() - (this.calculateMinutesSinceStart() * 60000);
+        this.buttonPressTime = Date.now();  // Track when Start Race Day was clicked
         this.updateInterval = null;
     }
 
     getCurrentTime() {
         const now = Date.now();
-        const elapsedMs = now - this.raceDayStartTime;
+        const elapsedMs = now - this.buttonPressTime;
 
         if (this.isTestMode) {
             // In test mode, time accelerates
             const acceleratedMs = elapsedMs * (this.testSpeed / 1);
-            return new Date(this.raceDayStartTime + acceleratedMs);
+            return new Date(this.buttonPressTime + acceleratedMs);
         } else {
-            // Normal time
-            return now;
+            // Normal mode: return current actual time
+            return new Date(now);
         }
     }
 
@@ -720,12 +732,6 @@ class RaceTimer {
         const date = new Date();
         date.setHours(hours, minutes, 0, 0);
         return date;
-    }
-
-    calculateMinutesSinceStart() {
-        const now = new Date();
-        const diffMs = now - this.raceStartTime;
-        return Math.floor(diffMs / 60000);
     }
 
     getCurrentActivity() {
