@@ -272,16 +272,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Update UI
+            console.log('About to hide setupScreen, show profileSummary and tabContainer');
             setupScreen.style.display = 'none';
             profileSummary.style.display = 'block';
             tabContainer.style.display = 'flex';
+            console.log('UI visibility updated');
 
+            console.log('Calling updateProfileSummary with:', profileData.race.name);
             updateProfileSummary(profileData);
+            console.log('updateProfileSummary completed');
+
+            console.log('Calling updateTabsWithTiming');
             updateTabsWithTiming(profileData, timingSpine);
+            console.log('updateTabsWithTiming completed');
+
+            // Show temporary success message
+            const tempMsg = document.createElement('div');
+            tempMsg.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #10b981; color: white; padding: 15px 30px; border-radius: 8px; z-index: 9999; font-weight: bold;';
+            tempMsg.textContent = '✓ Profile saved! Loading your schedule...';
+            document.body.appendChild(tempMsg);
 
             // Scroll to profile summary
+            console.log('About to scroll to profileSummary');
             setTimeout(() => {
+                console.log('Scrolling now, profileSummary element:', profileSummary);
                 profileSummary.scrollIntoView({ behavior: 'smooth' });
+
+                // Remove temp message after scroll
+                setTimeout(() => {
+                    tempMsg.remove();
+                }, 2000);
             }, 100);
 
         } catch (error) {
