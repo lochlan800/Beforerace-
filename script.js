@@ -317,6 +317,32 @@ function startRaceDayMode(profile, timingSpine) {
     console.log('RaceTimer created:', raceTimer);
     console.log('Button press time:', raceTimer.buttonPressTime);
 
+    // Add debug display on mobile
+    const debugDiv = document.createElement('div');
+    debugDiv.id = 'debug-display';
+    debugDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        left: 10px;
+        right: 10px;
+        background: yellow;
+        border: 2px solid red;
+        padding: 10px;
+        font-size: 12px;
+        z-index: 9999;
+        color: black;
+        max-height: 200px;
+        overflow: auto;
+    `;
+    debugDiv.innerHTML = `
+        <strong>DEBUG INFO:</strong><br>
+        Race Start Time: ${profile.race.startTime}<br>
+        Button Pressed At: ${new Date(raceTimer.buttonPressTime).toLocaleTimeString()}<br>
+        Current Time Now: ${new Date().toLocaleTimeString()}<br>
+        Test Mode: ${raceTimer.isTestMode}<br>
+    `;
+    document.body.appendChild(debugDiv);
+
     const notifManager = new NotificationManager(timingSpine, raceTimer);
 
     // Update display immediately
@@ -861,17 +887,24 @@ function updateLiveClockDisplay(raceTimer) {
     console.log('updateLiveClockDisplay called');
     const currentTime = raceTimer.getCurrentTime();
     console.log('Current time from raceTimer:', currentTime);
-    console.log('Formatted time:', raceTimer.formatTime(currentTime));
+    const formattedTime = raceTimer.formatTime(currentTime);
+    console.log('Formatted time:', formattedTime);
 
     const { current, next, minutesDiff } = raceTimer.getCurrentActivity();
 
     // Update clock
     const clockElement = document.getElementById('live-clock-time');
     if (clockElement) {
-        clockElement.textContent = raceTimer.formatTime(currentTime);
+        clockElement.textContent = formattedTime;
         console.log('Clock updated to:', clockElement.textContent);
     } else {
         console.error('Clock element not found!');
+    }
+
+    // Update debug display
+    const debugDiv = document.getElementById('debug-display');
+    if (debugDiv) {
+        debugDiv.innerHTML += `<br>Formatted Time: <strong>${formattedTime}</strong><br>Current Activity: ${current ? current.label : 'none'}`;
     }
 
     // Update current activity
