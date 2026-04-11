@@ -917,7 +917,7 @@ class RaceTimer {
         const timeKeys = Object.keys(this.timingSpine).sort((a, b) => {
             const aMin = parseInt(a.split('_')[1]);
             const bMin = parseInt(b.split('_')[1]);
-            return aMin - bMin;
+            return bMin - aMin;  // Descending order: T_180, T_150, ..., T_0
         });
 
         for (let i = 0; i < timeKeys.length; i++) {
@@ -925,10 +925,15 @@ class RaceTimer {
             const block = this.timingSpine[key];
             const blockMinutes = block.minutes;
 
-            if (minutesDiff >= blockMinutes) {
+            // Activity happens at: race_start - blockMinutes
+            // Activity has happened if: minutesDiff >= -blockMinutes
+            if (minutesDiff >= -blockMinutes) {
                 current = { key, ...block };
-            } else if (!next) {
-                next = { key, ...block };
+            } else {
+                if (!next) {
+                    next = { key, ...block };
+                }
+                break;  // Found the first activity that hasn't happened yet
             }
         }
 
