@@ -104,11 +104,11 @@ class TimingSpineGenerator {
             minutes: Math.floor((raceStart - arrivalTime) / 60000)
         };
 
-        // T-120: Finish breakfast, hydrate
+        // T-120: Get Ready (shower, dress, final prep)
         const t120 = new Date(raceStart - 120 * 60000);
         times.T_120 = {
-            label: 'Finish Breakfast',
-            action: 'Hydrate steadily, take care of bathroom needs.',
+            label: 'Get Ready',
+            action: 'Shower, dress, put on race gear. Final outfit check.',
             time: this.formatTime(t120),
             minutes: 120
         };
@@ -117,7 +117,7 @@ class TimingSpineGenerator {
         const t150 = new Date(raceStart - 150 * 60000);
         times.T_150 = {
             label: 'Breakfast',
-            action: 'Light breakfast: carbs + small protein.',
+            action: 'Light breakfast: carbs + small protein. Hydrate steadily.',
             time: this.formatTime(t150),
             minutes: 150
         };
@@ -129,6 +129,15 @@ class TimingSpineGenerator {
             action: 'Light mobility, first drink of water.',
             time: this.formatTime(t180),
             minutes: 180
+        };
+
+        // T-240: Prepare for the Day (4 hours before)
+        const t240 = new Date(raceStart - 240 * 60000);
+        times.T_240 = {
+            label: 'Prepare for the Day',
+            action: 'Set out gear, review race plan, check weather & venue.',
+            time: this.formatTime(t240),
+            minutes: 240
         };
 
         return times;
@@ -917,8 +926,10 @@ class RaceTimer {
         const timeKeys = Object.keys(this.timingSpine).sort((a, b) => {
             const aMin = parseInt(a.split('_')[1]);
             const bMin = parseInt(b.split('_')[1]);
-            return bMin - aMin;  // Descending order: T_180, T_150, ..., T_0
+            return bMin - aMin;  // Descending order: T_240, T_180, T_150, ..., T_0
         });
+
+        console.log('🔍 ACTIVITY SEARCH - minutesDiff:', minutesDiff, '| Sorted keys:', timeKeys.join(', '));
 
         for (let i = 0; i < timeKeys.length; i++) {
             const key = timeKeys[i];
@@ -927,15 +938,23 @@ class RaceTimer {
 
             // Activity happens at: race_start - blockMinutes
             // Activity has happened if: minutesDiff >= -blockMinutes
-            if (minutesDiff >= -blockMinutes) {
+            const hasHappened = minutesDiff >= -blockMinutes;
+            console.log(`  ${key} (${block.label}): minutes=${blockMinutes}, check: ${minutesDiff} >= -${blockMinutes} (${-blockMinutes}) = ${hasHappened}`);
+
+            if (hasHappened) {
                 current = { key, ...block };
+                console.log(`    ✓ Setting current = ${key}`);
             } else {
                 if (!next) {
                     next = { key, ...block };
+                    console.log(`    ✓ Setting next = ${key}`);
                 }
+                console.log(`    Breaking - found first activity that hasn't happened`);
                 break;  // Found the first activity that hasn't happened yet
             }
         }
+
+        console.log('✅ Final: current =', current ? current.label : 'null', '| next =', next ? next.label : 'null');
 
         return { current, next, minutesDiff };
     }
